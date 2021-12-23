@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+    db:
+        image: 'mariadb:latest'
+        # setting environment variables inside .env file
+        # this replaces the need for `environments` tag
+        env_file: .env
+    loader:
+        build:
+            # context is the path to the docker folder
+            context: ./file-loader/
+            dockerfile: Dockerfile
+        env_file: .env
+        # set the order in which services are started using `depends_on` tag
+        depends_on:
+            - "db"
+        command: ["./wait-for-it.sh", "db:3306", "--", "python", "main.py"]
+    app:
+        build:
+            context: ./flask-app/
+            dockerfile: Dockerfile
+        env_file: .env
+        depends_on:
+            db:
+                condition: service_started
+            loader:
+                condition: service_completed_successfully

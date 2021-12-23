@@ -1,0 +1,6 @@
+# add files here that you don't want to be inside the dockerimage
+# same syntax as gitignore
+# this is great for increasing your `docker build` performance
+Dockerfile
+history.db
+.gitignore
